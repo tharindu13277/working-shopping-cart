@@ -20,21 +20,27 @@ export default class App extends Component{
     }
     addToCartHandler = (product) =>{
 
-        //must add this product to the cart
-        //check if the cart have this product
-        //if yes increment value
-        //else add that product to the cart
 
 
-        const products = [...this.state.products];
-        const index = products.indexOf(product);
+        const cart = [...this.state.products];
+        const index = cart.indexOf(product);
+        console.log('index',index)
+        if (index.length>=0){
+            cart[index] = {...product};
+            cart[index].value++;
+            this.setState({cart},
+                ()=>console.log(this.state.products[index].value)
+            )
+        }else {
+            cart[index].value++
+            this.setState({cart})
+        }
+        /*
         products[index] = {...product};
         products[index].value++;
         this.setState({products},
-        ()=>console.log(this.state.products[index].value)
-        )
-
-
+            ()=>console.log(this.state.products[index].value)
+        )*/
 
 
 
@@ -59,8 +65,8 @@ export default class App extends Component{
 
     }
     cartList() {
-        return this.state.products.filter(c=>c.value>0).map(product => {
-            console.log('add to cart initiated')
+        return this.state.cart.filter(c=>c.value>0).map(product => {
+            console.log('add to cart initiated',product.value)
             return <Cart
                 key={product._id}
                 product={product}
@@ -71,9 +77,9 @@ export default class App extends Component{
     }
     handleDelete=(productId)=>{
         console.log('handle delete',productId)
-       const newProducts = this.state.products.filter(c => c._id !== productId);//filter everything but the object with counterId
+       const newProducts = this.state.cart.filter(c => c._id !== productId);//filter everything but the object with counterId
         this.setState({
-            products:newProducts
+            cart:newProducts
         });
     }
 
@@ -82,7 +88,7 @@ export default class App extends Component{
 
         return (
             <div className='container'>
-                <NavBar totalCount={this.state.products.filter(c=>c.value>0).length}/>
+                <NavBar totalCount={this.state.cart.filter(c=>c.value>0).length}/>
                 <Products
                     products={this.state.products}
                     onAddToCart={this.addToCartHandler}
